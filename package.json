@@ -6,6 +6,7 @@
     "html-entities": "^1.2.1",
     "iconv-lite": "^0.4.24",
     "moment": "^2.24.0",
+    "opn": "^5.4.0",
     "sprintf-js": "^1.1.2",
     "unescape": "^1.0.1"
   }

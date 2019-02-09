@@ -3,6 +3,8 @@ const moment = require('moment');
 const sprintf = require('sprintf-js').sprintf;
 const iconv = require("iconv-lite");
 const Entities = require('html-entities').AllHtmlEntities;
+const fs = require('fs');
+const opn = require('opn');
 const entities = new Entities();
 
 const Spinner = require('cli-spinner').Spinner;
@@ -89,15 +91,35 @@ https.get(mainPageUrl, {
                 }
 
                 doneUrls++;
+                let resultHTML = "";
 
                 if (doneUrls === urls.length) {
                     spinner.stop(true);
 
                     films.sort((a, b) => {
-                        return parseInt(a.score) - parseInt(b.score);
+                        return parseInt(b.score) - parseInt(a.score);
                     }).forEach(function (v, k) {
-                        console.log(sprintf("[+%d] %s \n%s\n", parseInt(v.score), v.title, v.url));
+                        resultHTML += sprintf(
+                            "<a href=\"%s\">[+%d] %s</a><br/>",
+                            v.url,
+                            parseInt(v.score),
+                            v.title
+                        );
                     });
+
+                    if (fs.exists("list.html")) {
+                        fs.unlink("list.html");
+                    }
+
+                    let file = fs.createWriteStream("list.html");
+
+                    file.once('open', function (fd) {
+                        file.write(resultHTML);
+                        file.end();
+                        file.close();
+                    });
+
+                    opn("list.html");
                 }
             });
         });
